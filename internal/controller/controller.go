@@ -15,7 +15,7 @@ var (
 )
 
 type Servicer interface {
-	ProcessTheTransaction(walletID, operation string, amount float64) error
+	ProcessTheTransaction(walletID, operation string, amount int) error
 }
 
 type APIController struct {
@@ -23,9 +23,9 @@ type APIController struct {
 }
 
 type inputTransaction struct {
-	WalletID      string  `json:"wallet_id" binding:"required,uuid"`
-	OperationType string  `json:"operation_type" binding:"required,oneof=DEPOSIT WITHDRAW"`
-	Amount        float64 `json:"amount" binding:"required,numeric,gt>0"`
+	WalletID      string `json:"wallet_id" binding:"required,uuid"`
+	OperationType string `json:"operation_type" binding:"required,oneof=DEPOSIT WITHDRAW"`
+	Amount        int    `json:"amount" binding:"required,numeric,gt=0"`
 }
 
 func NewAPIController(s Servicer) *APIController {

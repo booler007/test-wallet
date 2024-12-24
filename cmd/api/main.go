@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"wallet/cmd/api/controller"
-	"wallet/cmd/api/service"
-	"wallet/cmd/api/storage"
+	"wallet/internal/cache"
+	"wallet/internal/controller"
+	"wallet/internal/service"
+	"wallet/internal/storage"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
@@ -39,14 +40,17 @@ func main() {
 	}
 
 	var (
-		str    = storage.NewStorage(db)
-		svc    = service.NewService(str)
-		ctrl   = controller.NewAPIController(svc)
-		router = gin.Default()
+		str         = storage.NewStorage(db)
+		c, errCache = cache.InitCache(str)
+		svc         = service.NewService(c)
+		ctrl        = controller.NewAPIController(svc)
+		router      = gin.Default()
 	)
+	if errCache != nil {
+		log.Fatal(errCache)
+	}
 
 	router.Use(controller.ErrorHandler())
-
 	ctrl.SetupRouter(router)
 
 	srv := http.Server{
