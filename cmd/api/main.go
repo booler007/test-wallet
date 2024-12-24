@@ -28,7 +28,7 @@ func main() {
 	cfg := initConfig()
 
 	dns := fmt.Sprintf(
-		"host=localhost user=%s password=%s  dbname=%s port=5432 sslmode=disable",
+		"host=postgres user=%s password=%s  dbname=%s port=5432 sslmode=disable",
 		cfg.DBUser,
 		cfg.DBPass,
 		cfg.DBName,
