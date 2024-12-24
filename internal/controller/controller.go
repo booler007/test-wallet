@@ -15,7 +15,8 @@ var (
 )
 
 type Servicer interface {
-	ProcessTheTransaction(walletID, operation string, amount int) error
+	ProcessTheTransaction(string, string, int) error
+	GetBalance(string) (int, error)
 }
 
 type APIController struct {
@@ -56,7 +57,16 @@ func (c *APIController) ProcessTheTransaction(ctx *gin.Context) {
 	ctx.Status(http.StatusCreated)
 }
 
-func (c *APIController) GetBalance(ctx *gin.Context) {}
+func (c *APIController) GetBalance(ctx *gin.Context) {
+	walletID := ctx.Param("id")
+	balance, err := c.Service.GetBalance(walletID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"wallet": walletID, "balance": balance})
+}
 
 type out struct {
 	Field   string `json:"field"`
